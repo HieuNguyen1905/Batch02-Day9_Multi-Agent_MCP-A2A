@@ -134,8 +134,21 @@ def calculate_damages(breach_type: str, contract_value: float) -> str:
         f"  Total estimated exposure: ${total:,.2f}"
     )
 
+#Tạo một hàm tên check_statute_of_limitations nhận vào case_type. Thêm decorator @tool. Trả về dict: contract -> 4 năm, tort -> 2-3 năm, property -> 5 năm
 
-TOOLS = [search_legal_database, calculate_damages]
+@tool
+def check_statute_of_limitations(case_type: str) -> str:
+    """Check the statute of limitations for different case types."""
+    case_type_lower = case_type.lower()
+    if "contract" in case_type_lower:
+        return "Contract cases typically have a statute of limitations of 4 years."
+    elif "tort" in case_type_lower:
+        return "Tort cases generally have a statute of limitations of 2-3 years, depending on the jurisdiction."
+    elif "property" in case_type_lower:
+        return "Property cases often have a statute of limitations of 5 years."
+    else:
+        return "Case type not recognized. Please specify 'contract', 'tort', or 'property'."    
+TOOLS = [search_legal_database, calculate_damages, check_statute_of_limitations]
 
 QUESTION = "What are the legal consequences if a company breaches a non-disclosure agreement?"
 
@@ -146,7 +159,7 @@ async def main():
     print("=" * 70)
     print()
     print("[How it works]")
-    print("  1. LLM receives tools (search_legal_database, calculate_damages)")
+    print("  1. LLM receives tools (search_legal_database, calculate_damages, check_statute_of_limitations)")
     print("  2. LLM decides which tools to call and with what arguments")
     print("  3. We execute the tools and feed results back to the LLM")
     print("  4. LLM generates a final answer grounded in retrieved data")

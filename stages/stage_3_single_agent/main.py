@@ -171,8 +171,27 @@ def check_compliance_requirements(industry: str, company_size: str) -> str:
         f"  {size_note}"
     )
 
+@tool
+def search_case_law(keywords: str) -> str:
+    """Tìm kiếm án lệ theo từ khóa.
+    breach -> Hadley v. Baxendale
+    negligence -> Donoghue v. Stevenson
+    contract -> Carlill v. Carbolic Smoke Ball Co
+    """
+    keyword_map = {
+        "breach": "Hadley v. Baxendale (1854) - established consequential damages rule.",
+        "negligence": "Donoghue v. Stevenson (1932) - established modern negligence principles.",
+        "contract": "Carlill v. Carbolic Smoke Ball Co (1893) - established unilateral contract acceptance.",
+    }
+    results = []
+    for kw, case in keyword_map.items():
+        if kw in keywords.lower():
+            results.append(case)
+    if not results:
+        return "No relevant case law found."
+    return "\n".join(results)
 
-TOOLS = [search_legal_database, calculate_penalty, check_compliance_requirements]
+TOOLS = [search_legal_database, calculate_penalty, check_compliance_requirements, search_case_law]
 
 QUESTION = (
     "A tech startup with $5M revenue was caught sharing user data without consent "
